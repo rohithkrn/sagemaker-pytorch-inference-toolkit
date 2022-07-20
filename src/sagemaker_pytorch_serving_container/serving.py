@@ -35,4 +35,5 @@ def _start_torchserve():
 
 
 def main():
+    print("Serving main: starting torchserve")
     _start_torchserve()
