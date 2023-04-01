@@ -28,7 +28,7 @@ DEFAULT_TS_MAX_BATCH_DELAY = 100
 DEFAULT_TS_MIN_WORKERS = 1
 DEFAULT_TS_MAX_WORKERS = 1
 DEFAULT_TS_RESPONSE_TIMEOUT = 60
-
+DEFAULT_MAX_REQUEST_SIZE = None
 
 class TorchServeEnvironment():
     """Provides access to aspects of the torchserve environment relevant to serving containers,
@@ -54,6 +54,9 @@ class TorchServeEnvironment():
         self._max_workers = int(os.environ.get(ts_parameters.MODEL_SERVER_MAX_WORKERS, DEFAULT_TS_MAX_WORKERS))
         self._response_timeout = int(os.environ.get(ts_parameters.MODEL_SERVER_RESPONSE_TIMEOUT,
                                                     DEFAULT_TS_RESPONSE_TIMEOUT))
+        self._max_request_size_in_mb = os.environ.get(
+            ts_parameters.MAX_REQUEST_SIZE, DEFAULT_MAX_REQUEST_SIZE
+        )
 
     def is_env_set(self):  # type: () -> bool
         """bool: whether or not the environment variables have been set"""
@@ -92,3 +95,11 @@ class TorchServeEnvironment():
         """int: time delay after which inference will timeout in absense of a response
         """
         return self._response_timeout
+
+    @property
+    def max_request_size(self):  # type: () -> str
+        """str: max request size set by Sagemaker platform in bytes"""
+        if self._max_request_size_in_mb is not None:
+            return int(self._max_request_size_in_mb) * 1024 * 1024
+        else:
+            return None

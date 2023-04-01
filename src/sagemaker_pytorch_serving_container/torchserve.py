@@ -128,15 +128,17 @@ def _create_torchserve_config_file(handler_service):
 
 def _generate_ts_config_properties(handler_service):
     env = environment.Environment()
+    ts_env = ts_environment.TorchServeEnvironment()
+
     user_defined_configuration = {
         "default_response_timeout": env.model_server_timeout,
         "default_workers_per_model": env.model_server_workers,
         "inference_address": "http://0.0.0.0:{}".format(env.inference_http_port),
         "management_address": "http://0.0.0.0:{}".format(env.management_http_port),
         "default_service_handler": handler_service + ":handle",
+        "max_request_size": ts_env.max_request_size,
     }
 
-    ts_env = ts_environment.TorchServeEnvironment()
 
     if ts_env.is_env_set() and not ENABLE_MULTI_MODEL:
         models_string = f'''{{\\
